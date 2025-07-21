@@ -1,0 +1,1041 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Activus Transport Dashboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: #2c3e50;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .nav-buttons {
+            display: flex;
+            background: #34495e;
+            overflow-x: auto;
+        }
+
+        .nav-btn {
+            background: none;
+            border: none;
+            color: white;
+            padding: 15px 25px;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: background 0.3s;
+        }
+
+        .nav-btn:hover,
+        .nav-btn.active {
+            background: #3498db;
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .section {
+            margin-bottom: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid #3498db;
+        }
+
+        .section h2 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+        }
+
+        .form-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+            min-width: 1100px;
+        }
+
+        .form-table th,
+        .form-table td {
+            border: 1px solid #ddd;
+            padding: 8px 6px;
+            text-align: center;
+        }
+
+        .form-table th {
+            background: #eaf1fb;
+        }
+
+        .metrics {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .metric-card {
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .metric-card h3 {
+            margin: 0 0 10px 0;
+            font-size: 1em;
+        }
+
+        .metric-card .value {
+            font-size: 2em;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            min-width: 900px;
+        }
+
+        .table th,
+        .table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .table th {
+            background: #f8f9fa;
+            font-weight: bold;
+        }
+
+        .buttons {
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        .btn {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 0 10px;
+        }
+
+        .btn:hover {
+            background: #2980b9;
+        }
+
+        .btn-secondary {
+            background: #95a5a6;
+        }
+
+        .btn-secondary:hover {
+            background: #7f8c8d;
+        }
+
+        .page {
+            display: none;
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        .table-responsive {
+            width: 100%;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Activus Transport Dashboard</h1>
+            <p>Non-Emergency Medical Transport Operations</p>
+        </div>
+        <div class="nav-buttons">
+            <button class="nav-btn active" data-page="revenue">Revenue & Pricing</button>
+            <button class="nav-btn" data-page="costs">Operating Costs</button>
+            <button class="nav-btn" data-page="operations">Operations</button>
+            <button class="nav-btn" data-page="analytics">Analytics</button>
+        </div>
+        <div class="content">
+            <!-- Revenue Page -->
+            <div class="page active" id="revenue">
+                <div class="section">
+                    <h2>Service Rates, Volume, Mileage, and Wait Time</h2>
+                    <div class="table-responsive">
+                        <table class="form-table">
+                            <thead>
+                                <tr>
+                                    <th>Service Type</th>
+                                    <th>Payor Type</th>
+                                    <th>One Way Rate<br>($/trip)</th>
+                                    <th>One Way Trips<br>/Month</th>
+                                    <th>Round Trip Rate<br>($/trip)</th>
+                                    <th>Round Trips<br>/Month</th>
+                                    <th>Mileage<br>(miles/trip)</th>
+                                    <th>Mileage Rate<br>($/mile)</th>
+                                    <th>Wait Time<br>(min/trip)</th>
+                                    <th>Wait Rate<br>($/hour)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Ambulatory Private Pay -->
+                                <tr>
+                                    <td>Ambulatory</td>
+                                    <td>Private Pay</td>
+                                    <td><input type="number" id="amb-priv-oneway-rate" value="45" min="0"></td>
+                                    <td><input type="number" id="amb-priv-oneway-trips" value="0" min="0"></td>
+                                    <td><input type="number" id="amb-priv-roundtrip-rate" value="80" min="0"></td>
+                                    <td><input type="number" id="amb-priv-roundtrip-trips" value="0" min="0"></td>
+                                    <td><input type="number" id="amb-priv-mileage" value="0" min="0"></td>
+                                    <td><input type="number" id="amb-priv-mileage-rate" value="3" min="0" step="0.01">
+                                    </td>
+                                    <td><input type="number" id="amb-priv-wait" value="0" min="0"></td>
+                                    <td><input type="number" id="amb-priv-wait-rate" value="60" min="0"></td>
+                                </tr>
+                                <!-- Ambulatory Facility Pay -->
+                                <tr>
+                                    <td>Ambulatory</td>
+                                    <td>Facility Pay</td>
+                                    <td><input type="number" id="amb-fac-oneway-rate" value="30" min="0"></td>
+                                    <td><input type="number" id="amb-fac-oneway-trips" value="0" min="0"></td>
+                                    <td><input type="number" id="amb-fac-roundtrip-rate" value="55" min="0"></td>
+                                    <td><input type="number" id="amb-fac-roundtrip-trips" value="0" min="0"></td>
+                                    <td><input type="number" id="amb-fac-mileage" value="0" min="0"></td>
+                                    <td><input type="number" id="amb-fac-mileage-rate" value="3" min="0" step="0.01">
+                                    </td>
+                                    <td><input type="number" id="amb-fac-wait" value="0" min="0"></td>
+                                    <td><input type="number" id="amb-fac-wait-rate" value="60" min="0"></td>
+                                </tr>
+                                <!-- Wheelchair Private Pay -->
+                                <tr>
+                                    <td>Wheelchair</td>
+                                    <td>Private Pay</td>
+                                    <td><input type="number" id="wc-priv-oneway-rate" value="80" min="0"></td>
+                                    <td><input type="number" id="wc-priv-oneway-trips" value="0" min="0"></td>
+                                    <td><input type="number" id="wc-priv-roundtrip-rate" value="150" min="0"></td>
+                                    <td><input type="number" id="wc-priv-roundtrip-trips" value="0" min="0"></td>
+                                    <td><input type="number" id="wc-priv-mileage" value="0" min="0"></td>
+                                    <td><input type="number" id="wc-priv-mileage-rate" value="3" min="0" step="0.01">
+                                    </td>
+                                    <td><input type="number" id="wc-priv-wait" value="0" min="0"></td>
+                                    <td><input type="number" id="wc-priv-wait-rate" value="60" min="0"></td>
+                                </tr>
+                                <!-- Wheelchair Facility Pay -->
+                                <tr>
+                                    <td>Wheelchair</td>
+                                    <td>Facility Pay</td>
+                                    <td><input type="number" id="wc-fac-oneway-rate" value="50" min="0"></td>
+                                    <td><input type="number" id="wc-fac-oneway-trips" value="0" min="0"></td>
+                                    <td><input type="number" id="wc-fac-roundtrip-rate" value="90" min="0"></td>
+                                    <td><input type="number" id="wc-fac-roundtrip-trips" value="0" min="0"></td>
+                                    <td><input type="number" id="wc-fac-mileage" value="0" min="0"></td>
+                                    <td><input type="number" id="wc-fac-mileage-rate" value="3" min="0" step="0.01">
+                                    </td>
+                                    <td><input type="number" id="wc-fac-wait" value="0" min="0"></td>
+                                    <td><input type="number" id="wc-fac-wait-rate" value="60" min="0"></td>
+                                </tr>
+                                <!-- Gurney Private Pay -->
+                                <tr>
+                                    <td>Gurney</td>
+                                    <td>Private Pay</td>
+                                    <td><input type="number" id="gur-priv-oneway-rate" value="150" min="0"></td>
+                                    <td><input type="number" id="gur-priv-oneway-trips" value="0" min="0"></td>
+                                    <td><input type="number" id="gur-priv-roundtrip-rate" value="280" min="0"></td>
+                                    <td><input type="number" id="gur-priv-roundtrip-trips" value="0" min="0"></td>
+                                    <td><input type="number" id="gur-priv-mileage" value="0" min="0"></td>
+                                    <td><input type="number" id="gur-priv-mileage-rate" value="4" min="0" step="0.01">
+                                    </td>
+                                    <td><input type="number" id="gur-priv-wait" value="0" min="0"></td>
+                                    <td><input type="number" id="gur-priv-wait-rate" value="70" min="0"></td>
+                                </tr>
+                                <!-- Gurney Facility Pay -->
+                                <tr>
+                                    <td>Gurney</td>
+                                    <td>Facility Pay</td>
+                                    <td><input type="number" id="gur-fac-oneway-rate" value="100" min="0"></td>
+                                    <td><input type="number" id="gur-fac-oneway-trips" value="0" min="0"></td>
+                                    <td><input type="number" id="gur-fac-roundtrip-rate" value="250" min="0"></td>
+                                    <td><input type="number" id="gur-fac-roundtrip-trips" value="0" min="0"></td>
+                                    <td><input type="number" id="gur-fac-mileage" value="0" min="0"></td>
+                                    <td><input type="number" id="gur-fac-mileage-rate" value="4" min="0" step="0.01">
+                                    </td>
+                                    <td><input type="number" id="gur-fac-wait" value="0" min="0"></td>
+                                    <td><input type="number" id="gur-fac-wait-rate" value="70" min="0"></td>
+                                </tr>
+                                <!-- Court Call Private Pay -->
+                                <tr>
+                                    <td>Court Call</td>
+                                    <td>Private Pay</td>
+                                    <td><input type="number" id="court-priv-oneway-rate" value="0" min="0"></td>
+                                    <td><input type="number" id="court-priv-oneway-trips" value="0" min="0"></td>
+                                    <td><input type="number" id="court-priv-roundtrip-rate" value="0" min="0"></td>
+                                    <td><input type="number" id="court-priv-roundtrip-trips" value="0" min="0"></td>
+                                    <td><input type="number" id="court-priv-mileage" value="0" min="0"></td>
+                                    <td><input type="number" id="court-priv-mileage-rate" value="0" min="0" step="0.01">
+                                    </td>
+                                    <td><input type="number" id="court-priv-wait" value="0" min="0"></td>
+                                    <td><input type="number" id="court-priv-wait-rate" value="0" min="0"></td>
+                                </tr>
+                                <!-- Court Call Facility Pay -->
+                                <tr>
+                                    <td>Court Call</td>
+                                    <td>Facility Pay</td>
+                                    <td><input type="number" id="court-fac-oneway-rate" value="0" min="0"></td>
+                                    <td><input type="number" id="court-fac-oneway-trips" value="0" min="0"></td>
+                                    <td><input type="number" id="court-fac-roundtrip-rate" value="0" min="0"></td>
+                                    <td><input type="number" id="court-fac-roundtrip-trips" value="0" min="0"></td>
+                                    <td><input type="number" id="court-fac-mileage" value="0" min="0"></td>
+                                    <td><input type="number" id="court-fac-mileage-rate" value="0" min="0" step="0.01">
+                                    </td>
+                                    <td><input type="number" id="court-fac-wait" value="0" min="0"></td>
+                                    <td><input type="number" id="court-fac-wait-rate" value="0" min="0"></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="section">
+                    <h2>Payment Sources</h2>
+                    <div class="table-responsive">
+                        <table class="form-table" style="width:100%;">
+                            <tr>
+                                <th>Collection Rate (%)</th>
+                                <th>Medicare/Medicaid (%)</th>
+                                <th>Private Pay (%)</th>
+                                <th>Insurance (%)</th>
+                            </tr>
+                            <tr>
+                                <td><input type="number" id="collection-rate" value="85" max="100"></td>
+                                <td><input type="number" id="medicare-percent" value="65" max="100"></td>
+                                <td><input type="number" id="private-percent" value="25" max="100"></td>
+                                <td><input type="number" id="insurance-percent" value="10" max="100"></td>
+                            </tr>
+                        </table>
+                    </div>
+                </div> <!-- Payment Sources section end -->
+                <div class="section">
+                    <h2>UCR Service</h2>
+                    <div class="table-responsive">
+                        <table class="form-table" style="width:100%;">
+                            <tr>
+                                <th>Service</th>
+                                <th>Fixed Rate</th>
+                                <th>Number of Passengers</th>
+                            </tr>
+                            <tr>
+                                <td>Ambulatory</td>
+                                <td>$37.50</td>
+                                <td><input type="number" id="ucr-amb-passengers" value="0" min="0"></td>
+                            </tr>
+                            <tr>
+                                <td>Wheelchair</td>
+                                <td>$75.00</td>
+                                <td><input type="number" id="ucr-wc-passengers" value="0" min="0"></td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <!-- Costs Page -->
+            <div class="page" id="costs">
+                <div class="section">
+                    <h2>Vehicle Costs</h2>
+                    <div class="table-responsive">
+                        <table class="form-table" style="width:100%;">
+                            <tr>
+                                <th>Van Payment ($/month each)</th>
+                                <th>Prius Payment ($/month each)</th>
+                                <th>Vehicle Insurance ($/month total)</th>
+                                <th>Fuel Cost ($/month total)</th>
+                                <th>Maintenance ($/month total)</th>
+                                <th>Registration & Fees ($/month)</th>
+                            </tr>
+                            <tr>
+                                <td><input type="number" id="van-payment" value="0"></td>
+                                <td><input type="number" id="prius-payment" value="600"></td>
+                                <td><input type="number" id="vehicle-insurance" value="1200"></td>
+                                <!-- Fuel Cost: fill-ups per month for Vans ($75 each) and Prius ($40 each) -->
+                                <td>
+                                    <label>Vans: <input type="number" id="van-fuel-ups" value="0" min="0"></label>
+                                    <br>
+                                    <label>Prius: <input type="number" id="prius-fuel-ups" value="0" min="0"></label>
+                                </td>
+                                <!-- Maintenance: $110 per vehicle; for 4 vehicles default total = 440 -->
+                                <td><input type="number" id="maintenance" value="440"></td>
+                                <!-- Registration: Vans $800/yr and Prius $270/yr; for 2 vans & 2 Prius monthly total approx = 178 -->
+                                <td><input type="number" id="registration" value="178"></td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+                <div class="section">
+                    <h2>Labor Costs</h2>
+                    <div class="table-responsive">
+                        <table class="form-table" style="width:100%;">
+                            <tr>
+                                <th>Driver Hourly Wage ($)</th>
+                                <th>Number of Drivers</th>
+                                <th>Hours per Driver/Month</th>
+                                <th>Payroll Taxes & Benefits (%)</th>
+                            </tr>
+                            <tr>
+                                <td><input type="number" id="driver-wage" value="20"></td>
+                                <td><input type="number" id="driver-count" value="6"></td>
+                                <td><input type="number" id="hours-per-driver" value="160"></td>
+                                <td><input type="number" id="payroll-taxes" value="15"></td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+                <div class="section">
+                    <h2>Fixed Overhead</h2>
+                    <div class="table-responsive">
+                        <table class="form-table" style="width:100%;">
+                            <tr>
+                                <th>Office Rent ($/month)</th>
+                                <th>Utilities ($/month)</th>
+                                <th>General Insurance ($/month)</th>
+                                <th>Licenses & Permits ($/month)</th>
+                                <th>Administrative Expenses ($/month)</th>
+                            </tr>
+                            <tr>
+                                <td><input type="number" id="rent" value="1000"></td>
+                                <td><input type="number" id="utilities" value="520"></td>
+                                <td><input type="number" id="general-insurance" value="800"></td>
+                                <td><input type="number" id="licenses" value="400"></td>
+                                <td><input type="number" id="admin" value="187"></td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <!-- Operations Page -->
+            <div class="page" id="operations">
+                <div class="section">
+                    <h2>Operational Efficiency & Growth Metrics</h2>
+                    <div class="table-responsive">
+                        <table class="form-table" style="width:100%;">
+                            <tr>
+                                <th>Total Miles Driven (month)</th>
+                                <th>Total Deadhead Miles (month)</th>
+                                <th>Missed Trips (month)</th>
+                                <th>On-Time Trips (month)</th>
+                                <th>Total Scheduled Trips (month)</th>
+                                <th>Repeat Customer Trips (month)</th>
+                                <th>Overtime Hours (month)</th>
+                                <th>Total Driver Hours (month)</th>
+                                <th>Number of Vehicles</th>
+                            </tr>
+                            <tr>
+                                <td><input type="number" id="total-miles" value="0" min="0"></td>
+                                <td><input type="number" id="deadhead-miles" value="0" min="0"></td>
+                                <td><input type="number" id="missed-trips" value="0" min="0"></td>
+                                <td><input type="number" id="on-time-trips" value="0" min="0"></td>
+                                <td><input type="number" id="scheduled-trips" value="0" min="0"></td>
+                                <td><input type="number" id="repeat-trips" value="0" min="0"></td>
+                                <td><input type="number" id="overtime-hours" value="0" min="0"></td>
+                                <td><input type="number" id="total-driver-hours" value="0" min="0"></td>
+                                <td><input type="number" id="vehicle-count" value="4" min="1"></td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div class="metrics">
+                        <div class="metric-card">
+                            <h3>Deadhead Miles %</h3>
+                            <div class="value" id="deadhead-percent">0%</div>
+                        </div>
+                        <div class="metric-card">
+                            <h3>Repeat Customer Rate</h3>
+                            <div class="value" id="repeat-rate">0%</div>
+                        </div>
+                        <div class="metric-card">
+                            <h3>On-Time Performance</h3>
+                            <div class="value" id="on-time-rate">0%</div>
+                        </div>
+                        <div class="metric-card">
+                            <h3>Trips per Vehicle</h3>
+                            <div class="value" id="trips-per-vehicle">0</div>
+                        </div>
+                        <div class="metric-card">
+                            <h3>Hours in Use per Vehicle</h3>
+                            <div class="value" id="hours-per-vehicle">0</div>
+                        </div>
+                        <div class="metric-card">
+                            <h3>Estimated Missed Revenue</h3>
+                            <div class="value" id="missed-revenue">$0</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Analytics Page -->
+            <div class="page" id="analytics">
+                <div class="section">
+                    <h2>Financial Summary</h2>
+                    <div class="metrics">
+                        <div class="metric-card">
+                            <h3>Monthly Revenue</h3>
+                            <div class="value" id="monthly-revenue">$0</div>
+                        </div>
+                        <div class="metric-card">
+                            <h3>Net Revenue</h3>
+                            <div class="value" id="net-revenue">$0</div>
+                        </div>
+                        <div class="metric-card">
+                            <h3>Total Costs</h3>
+                            <div class="value" id="total-costs">$0</div>
+                        </div>
+                        <div class="metric-card">
+                            <h3>Net Profit</h3>
+                            <div class="value" id="net-profit">$0</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="section">
+                    <h2>Revenue Breakdown</h2>
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Service Type</th>
+                                    <th>Payor Type</th>
+                                    <th>One Way Revenue</th>
+                                    <th>Round Trip Revenue</th>
+                                    <th>Mileage Revenue</th>
+                                    <th>Wait Revenue</th>
+                                    <th>Total Revenue</th>
+                                    <th>Total Trips</th>
+                                    <th>Net Revenue</th>
+                                </tr>
+                            </thead>
+                            <tbody id="revenue-table">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="section">
+                    <h2>Cost Breakdown</h2>
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Cost Category</th>
+                                    <th>Monthly Cost</th>
+                                    <th>% of Total</th>
+                                </tr>
+                            </thead>
+                            <tbody id="cost-table">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="section">
+                    <h2>Key Performance Indicators</h2>
+                    <div class="table-responsive">
+                        <table class="form-table" style="width:100%;">
+                            <tr>
+                                <th>Revenue per Vehicle</th>
+                                <th>Cost per Mile</th>
+                                <th>Break-even Trips/Month</th>
+                                <th>Profit Margin</th>
+                                <th>Avg Mileage/Trip</th>
+                                <th>Avg Wait Time/Trip</th>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div id="revenue-per-vehicle"
+                                        style="font-size: 1.5em; color: #3498db; font-weight: bold;">$0</div>
+                                </td>
+                                <td>
+                                    <div id="cost-per-mile"
+                                        style="font-size: 1.5em; color: #e74c3c; font-weight: bold;">$0</div>
+                                </td>
+                                <td>
+                                    <div id="breakeven-trips"
+                                        style="font-size: 1.5em; color: #f39c12; font-weight: bold;">0</div>
+                                </td>
+                                <td>
+                                    <div id="profit-margin"
+                                        style="font-size: 1.5em; color: #27ae60; font-weight: bold;">0%</div>
+                                </td>
+                                <td>
+                                    <div id="avg-mileage" style="font-size: 1.5em; color: #2980b9; font-weight: bold;">0
+                                    </div>
+                                </td>
+                                <td>
+                                    <div id="avg-wait" style="font-size: 1.5em; color: #2980b9; font-weight: bold;">0
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+                <div class="section">
+                    <h2>Growth & What-If Analysis</h2>
+                    <div class="table-responsive">
+                        <table class="form-table" style="width:100%;">
+                            <tr>
+                                <th>Additional Vehicles</th>
+                            </tr>
+                            <tr>
+                                <td><input type="number" id="add-vehicles" value="0" min="0"></td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div class="metrics">
+                        <div class="metric-card">
+                            <h3>Projected Revenue (with new vehicles)</h3>
+                            <div class="value" id="projected-revenue">$0</div>
+                        </div>
+                        <div class="metric-card">
+                            <h3>Projected Net Profit (with new vehicles)</h3>
+                            <div class="value" id="projected-profit">$0</div>
+                        </div>
+                        <div class="metric-card">
+                            <h3>Break-Even Trips (per new vehicle)</h3>
+                            <div class="value" id="breakeven-new-vehicle">0</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="buttons">
+                <button class="btn" onclick="exportData()">Export Data</button>
+                <button class="btn btn-secondary" onclick="resetData()">Reset All</button>
+            </div>
+        </div>
+    </div>
+    <script>
+        // Navigation functionality
+        document.querySelectorAll('.nav-btn').forEach(button => {
+            button.addEventListener('click', function () {
+                const targetPage = this.getAttribute('data-page');
+                document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
+                document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
+                this.classList.add('active');
+                document.getElementById(targetPage).classList.add('active');
+            });
+        });
+
+        // Add event listeners to all inputs
+        document.querySelectorAll('input').forEach(input => {
+            input.addEventListener('input', calculateMetrics);
+        });
+
+        function calculateMetrics() {
+            function getVal(id) {
+                return parseFloat(document.getElementById(id).value) || 0;
+            }
+
+            // Service/payor combos
+            const combos = [
+                // Ambulatory
+                { type: 'Ambulatory', payor: 'Private Pay', prefix: 'amb-priv', },
+                { type: 'Ambulatory', payor: 'Facility Pay', prefix: 'amb-fac', },
+                // Wheelchair
+                { type: 'Wheelchair', payor: 'Private Pay', prefix: 'wc-priv', },
+                { type: 'Wheelchair', payor: 'Facility Pay', prefix: 'wc-fac', },
+                // Gurney
+                { type: 'Gurney', payor: 'Private Pay', prefix: 'gur-priv', },
+                { type: 'Gurney', payor: 'Facility Pay', prefix: 'gur-fac', },
+                // Court Call
+                { type: 'Court Call', payor: 'Private Pay', prefix: 'court-priv', },
+                { type: 'Court Call', payor: 'Facility Pay', prefix: 'court-fac', },
+            ];
+
+            let grossRevenue = 0, netRevenue = 0, totalTrips = 0, totalMiles = 0, totalWait = 0;
+            let revenueRows = [];
+            const collectionRate = getVal('collection-rate') || 85;
+
+            combos.forEach(c => {
+                const oneWayRate = getVal(`${c.prefix}-oneway-rate`);
+                const oneWayTrips = getVal(`${c.prefix}-oneway-trips`);
+                const roundTripRate = getVal(`${c.prefix}-roundtrip-rate`);
+                const roundTripTrips = getVal(`${c.prefix}-roundtrip-trips`);
+                const mileage = getVal(`${c.prefix}-mileage`);
+                const mileageRate = getVal(`${c.prefix}-mileage-rate`);
+                const wait = getVal(`${c.prefix}-wait`);
+                const waitRate = getVal(`${c.prefix}-wait-rate`);
+
+                const trips = oneWayTrips + roundTripTrips;
+                const oneWayRevenue = oneWayRate * oneWayTrips;
+                const roundTripRevenue = roundTripRate * roundTripTrips;
+                const mileageRevenue = mileageRate * mileage * trips;
+                const waitRevenue = waitRate * (wait / 60) * trips;
+                const totalRowRevenue = oneWayRevenue + roundTripRevenue + mileageRevenue + waitRevenue;
+                const netRowRevenue = totalRowRevenue * (collectionRate / 100);
+
+                grossRevenue += totalRowRevenue;
+                netRevenue += netRowRevenue;
+                totalTrips += trips;
+                totalMiles += mileage * trips;
+                totalWait += wait * trips;
+
+                revenueRows.push({
+                    type: c.type,
+                    payor: c.payor,
+                    oneWayRevenue, roundTripRevenue, mileageRevenue, waitRevenue,
+                    totalRowRevenue, trips, netRowRevenue
+                });
+            });
+
+            // UCR Service Revenue
+            const ucrAmbulatoryPassengers = getVal('ucr-amb-passengers');
+            const ucrWheelchairPassengers = getVal('ucr-wc-passengers');
+
+            const ucrAmbulatoryRate = 37.50;
+            const ucrWheelchairRate = 75.00;
+
+            const ucrAmbulatoryRevenue = ucrAmbulatoryRate * ucrAmbulatoryPassengers;
+            const ucrWheelchairRevenue = ucrWheelchairRate * ucrWheelchairPassengers;
+            const ucrTotalRevenue = ucrAmbulatoryRevenue + ucrWheelchairRevenue;
+            const ucrNetRevenue = ucrTotalRevenue * (collectionRate / 100);
+
+            grossRevenue += ucrTotalRevenue;
+            netRevenue += ucrNetRevenue;
+            totalTrips += ucrAmbulatoryPassengers + ucrWheelchairPassengers;
+
+            revenueRows.push({
+                type: 'UCR',
+                payor: 'N/A',
+                oneWayRevenue: ucrAmbulatoryRevenue,
+                roundTripRevenue: ucrWheelchairRevenue,
+                mileageRevenue: 0,
+                waitRevenue: 0,
+                totalRowRevenue: ucrTotalRevenue,
+                trips: ucrAmbulatoryPassengers + ucrWheelchairPassengers,
+                netRowRevenue: ucrNetRevenue
+            });
+
+            // Costs
+            const vanPayment = getVal('van-payment');
+            const priusPayment = getVal('prius-payment');
+            const vehicleInsurance = getVal('vehicle-insurance');
+            const vanFuelUps = getVal('van-fuel-ups');
+            const priusFuelUps = getVal('prius-fuel-ups');
+            const fuelCost = (vanFuelUps * 75) + (priusFuelUps * 40);
+            const maintenance = getVal('maintenance');
+            const registration = getVal('registration');
+            const driverWage = getVal('driver-wage');
+            const driverCount = getVal('driver-count');
+            const hoursPerDriver = getVal('hours-per-driver');
+            const payrollTaxes = getVal('payroll-taxes');
+            const rent = getVal('rent');
+            const utilities = getVal('utilities');
+            const generalInsurance = getVal('general-insurance');
+            const licenses = getVal('licenses');
+            const admin = getVal('admin');
+
+            const vehicleCosts = (vanPayment * 2) + (priusPayment * 2) + vehicleInsurance + fuelCost + maintenance + registration;
+            const laborCosts = (driverWage * driverCount * hoursPerDriver) * (1 + payrollTaxes / 100);
+            const fixedCosts = rent + utilities + generalInsurance + licenses + admin;
+            const totalCosts = vehicleCosts + laborCosts + fixedCosts;
+            const netProfit = netRevenue - totalCosts;
+            const profitMargin = netRevenue > 0 ? (netProfit / netRevenue) * 100 : 0;
+
+            // Update display
+            document.getElementById('monthly-revenue').textContent = `$${grossRevenue.toLocaleString()}`;
+            document.getElementById('net-revenue').textContent = `$${netRevenue.toLocaleString()}`;
+            document.getElementById('total-costs').textContent = `$${totalCosts.toLocaleString()}`;
+            document.getElementById('net-profit').textContent = `$${netProfit.toLocaleString()}`;
+
+            // Revenue table
+            const revenueTable = document.getElementById('revenue-table');
+            revenueTable.innerHTML = '';
+            revenueRows.forEach(r => {
+                const row = revenueTable.insertRow();
+                row.innerHTML = `
+                    <td>${r.type}</td>
+                    <td>${r.payor}</td>
+                    <td>$${r.oneWayRevenue.toLocaleString()}</td>
+                    <td>$${r.roundTripRevenue.toLocaleString()}</td>
+                    <td>$${r.mileageRevenue.toLocaleString()}</td>
+                    <td>$${r.waitRevenue.toLocaleString()}</td>
+                    <td>$${r.totalRowRevenue.toLocaleString()}</td>
+                    <td>${r.trips}</td>
+                    <td>$${r.netRowRevenue.toLocaleString()}</td>
+                `;
+            });
+
+            // Cost table
+            const costTable = document.getElementById('cost-table');
+            costTable.innerHTML = '';
+            const costs = [
+                { name: 'Vehicle Costs', cost: vehicleCosts },
+                { name: 'Labor Costs', cost: laborCosts },
+                { name: 'Fixed Overhead', cost: fixedCosts }
+            ];
+            costs.forEach(cost => {
+                const percentage = totalCosts > 0 ? (cost.cost / totalCosts) * 100 : 0;
+                const row = costTable.insertRow();
+                row.innerHTML = `
+                    <td>${cost.name}</td>
+                    <td>$${cost.cost.toLocaleString()}</td>
+                    <td>${percentage.toFixed(1)}%</td>
+                `;
+            });
+
+            // KPIs
+            const totalVehicles = getVal('vehicle-count') || 4;
+            const avgRevenuePerTrip = totalTrips > 0 ? netRevenue / totalTrips : 0;
+            const avgMileage = totalTrips > 0 ? (totalMiles / totalTrips).toFixed(2) : 0;
+            const avgWait = totalTrips > 0 ? (totalWait / totalTrips).toFixed(1) : 0;
+            document.getElementById('revenue-per-vehicle').textContent = `$${(netRevenue / totalVehicles).toLocaleString(undefined, { maximumFractionDigits: 0 })}`;
+            document.getElementById('cost-per-mile').textContent = totalMiles > 0 ? `$${(totalCosts / totalMiles).toFixed(2)}` : '$0';
+            document.getElementById('breakeven-trips').textContent = avgRevenuePerTrip > 0 ? `${Math.ceil(totalCosts / avgRevenuePerTrip)}` : '0';
+            document.getElementById('profit-margin').textContent = `${profitMargin.toFixed(1)}%`;
+            document.getElementById('avg-mileage').textContent = avgMileage;
+            document.getElementById('avg-wait').textContent = avgWait;
+
+            // --- Operations Tab Advanced Metrics ---
+            const totalMilesDriven = getVal('total-miles');
+            const deadheadMiles = getVal('deadhead-miles');
+            const missedTrips = getVal('missed-trips');
+            const onTimeTrips = getVal('on-time-trips');
+            const scheduledTrips = getVal('scheduled-trips');
+            const repeatTrips = getVal('repeat-trips');
+            const overtimeHours = getVal('overtime-hours');
+            const totalDriverHours = getVal('total-driver-hours');
+            const vehicleCount = getVal('vehicle-count') || 1;
+
+            // Deadhead %
+            const deadheadPercent = totalMilesDriven > 0 ? (deadheadMiles / totalMilesDriven) * 100 : 0;
+            document.getElementById('deadhead-percent').textContent = `${deadheadPercent.toFixed(1)}%`;
+
+            // Repeat Customer Rate
+            const repeatRate = scheduledTrips > 0 ? (repeatTrips / scheduledTrips) * 100 : 0;
+            document.getElementById('repeat-rate').textContent = `${repeatRate.toFixed(1)}%`;
+
+            // On-Time Performance
+            const onTimeRate = scheduledTrips > 0 ? (onTimeTrips / scheduledTrips) * 100 : 0;
+            document.getElementById('on-time-rate').textContent = `${onTimeRate.toFixed(1)}%`;
+
+            // Trips per Vehicle
+            const tripsPerVehicle = vehicleCount > 0 ? (scheduledTrips / vehicleCount) : 0;
+            document.getElementById('trips-per-vehicle').textContent = tripsPerVehicle.toFixed(1);
+
+            // Hours in Use per Vehicle
+            const hoursPerVehicle = vehicleCount > 0 ? (totalDriverHours / vehicleCount) : 0;
+            document.getElementById('hours-per-vehicle').textContent = hoursPerVehicle.toFixed(1);
+
+            // Estimated Missed Revenue (using avg fare per trip from your revenue calc)
+            const avgFarePerTrip = scheduledTrips > 0 ? (grossRevenue / scheduledTrips) : 0;
+            const missedRevenue = missedTrips * avgFarePerTrip;
+            document.getElementById('missed-revenue').textContent = `$${missedRevenue.toLocaleString(undefined, { maximumFractionDigits: 0 })}`;
+
+            // --- Analytics Tab: Growth & What-If Analysis ---
+            const addVehicles = getVal('add-vehicles');
+            const newVehicleCount = vehicleCount + addVehicles;
+            const projectedRevenue = vehicleCount > 0 ? (netRevenue / vehicleCount) * newVehicleCount : netRevenue;
+            const projectedProfit = projectedRevenue - totalCosts - (addVehicles * (vehicleCosts / vehicleCount));
+            document.getElementById('projected-revenue').textContent = `$${projectedRevenue.toLocaleString(undefined, { maximumFractionDigits: 0 })}`;
+            document.getElementById('projected-profit').textContent = `$${projectedProfit.toLocaleString(undefined, { maximumFractionDigits: 0 })}`;
+
+            // Break-even for new vehicle
+            const avgProfitPerTrip = scheduledTrips > 0 ? ((netRevenue - totalCosts) / scheduledTrips) : 0;
+            const breakevenNewVehicle = avgProfitPerTrip > 0 ? Math.ceil((vehicleCosts / vehicleCount) / avgProfitPerTrip) : 0;
+            document.getElementById('breakeven-new-vehicle').textContent = breakevenNewVehicle;
+        }
+
+        function exportData() {
+            let csvContent = "Section,ID,Value\n";
+
+            // Export all input fields
+            document.querySelectorAll('input').forEach(input => {
+                csvContent += `Input,${input.id},${input.value}\n`;
+            });
+
+            // List of dashboard analysis elements to export
+            const analysisIDs = [
+                'monthly-revenue',
+                'net-revenue',
+                'total-costs',
+                'net-profit',
+                'revenue-per-vehicle',
+                'cost-per-mile',
+                'breakeven-trips',
+                'profit-margin',
+                'avg-mileage',
+                'avg-wait',
+                'deadhead-percent',
+                'repeat-rate',
+                'on-time-rate',
+                'trips-per-vehicle',
+                'hours-per-vehicle',
+                'missed-revenue',
+                'projected-revenue',
+                'projected-profit',
+                'breakeven-new-vehicle'
+            ];
+
+            analysisIDs.forEach(id => {
+                const el = document.getElementById(id);
+                if (el) {
+                    let raw = el.textContent.trim();
+                    // Remove common formatting characters like $, commas, and % symbols.
+                    let cleaned = raw.replace(/[$,%]/g, '').replace(/,/g, '');
+                    csvContent += `Analysis,${id},${cleaned}\n`;
+                }
+            });
+
+            const dataUri = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csvContent);
+            const exportFileDefaultName = 'activus-dashboard-data.csv';
+            const linkElement = document.createElement('a');
+            linkElement.setAttribute('href', dataUri);
+            linkElement.setAttribute('download', exportFileDefaultName);
+            linkElement.click();
+        }
+
+        function resetData() {
+            if (confirm('Reset all data to default values?')) {
+                const defaults = {
+                    // Ambulatory Private Pay
+                    'amb-priv-oneway-rate': 45,
+                    'amb-priv-oneway-trips': 0,
+                    'amb-priv-roundtrip-rate': 80,
+                    'amb-priv-roundtrip-trips': 0,
+                    'amb-priv-mileage': 0,
+                    'amb-priv-mileage-rate': 3,
+                    'amb-priv-wait': 0,
+                    'amb-priv-wait-rate': 60,
+                    // Ambulatory Facility Pay
+                    'amb-fac-oneway-rate': 30,
+                    'amb-fac-oneway-trips': 0,
+                    'amb-fac-roundtrip-rate': 55,
+                    'amb-fac-roundtrip-trips': 0,
+                    'amb-fac-mileage': 0,
+                    'amb-fac-mileage-rate': 3,
+                    'amb-fac-wait': 0,
+                    'amb-fac-wait-rate': 60,
+                    // Wheelchair Private Pay
+                    'wc-priv-oneway-rate': 80,
+                    'wc-priv-oneway-trips': 0,
+                    'wc-priv-roundtrip-rate': 150,
+                    'wc-priv-roundtrip-trips': 0,
+                    'wc-priv-mileage': 0,
+                    'wc-priv-mileage-rate': 3,
+                    'wc-priv-wait': 0,
+                    'wc-priv-wait-rate': 60,
+                    // Wheelchair Facility Pay
+                    'wc-fac-oneway-rate': 50,
+                    'wc-fac-oneway-trips': 0,
+                    'wc-fac-roundtrip-rate': 90,
+                    'wc-fac-roundtrip-trips': 0,
+                    'wc-fac-mileage': 0,
+                    'wc-fac-mileage-rate': 3,
+                    'wc-fac-wait': 0,
+                    'wc-fac-wait-rate': 60,
+                    // Gurney Private Pay
+                    'gur-priv-oneway-rate': 150,
+                    'gur-priv-oneway-trips': 0,
+                    'gur-priv-roundtrip-rate': 280,
+                    'gur-priv-roundtrip-trips': 0,
+                    'gur-priv-mileage': 0,
+                    'gur-priv-mileage-rate': 4,
+                    'gur-priv-wait': 0,
+                    'gur-priv-wait-rate': 70,
+                    // Gurney Facility Pay
+                    'gur-fac-oneway-rate': 100,
+                    'gur-fac-oneway-trips': 0,
+                    'gur-fac-roundtrip-rate': 250,
+                    'gur-fac-roundtrip-trips': 0,
+                    'gur-fac-mileage': 0,
+                    'gur-fac-mileage-rate': 4,
+                    'gur-fac-wait': 0,
+                    'gur-fac-wait-rate': 70,
+                    // Court Call Private Pay
+                    'court-priv-oneway-rate': 0,
+                    'court-priv-oneway-trips': 0,
+                    'court-priv-roundtrip-rate': 0,
+                    'court-priv-roundtrip-trips': 0,
+                    'court-priv-mileage': 0,
+                    'court-priv-mileage-rate': 0,
+                    'court-priv-wait': 0,
+                    'court-priv-wait-rate': 0,
+                    // Court Call Facility Pay
+                    'court-fac-oneway-rate': 0,
+                    'court-fac-oneway-trips': 0,
+                    'court-fac-roundtrip-rate': 0,
+                    'court-fac-roundtrip-trips': 0,
+                    'court-fac-mileage': 0,
+                    'court-fac-mileage-rate': 0,
+                    'court-fac-wait': 0,
+                    'court-fac-wait-rate': 0,
+                    // Payment
+                    'collection-rate': 100,
+                    'medicare-percent': 0,
+                    'private-percent': 100,
+                    'insurance-percent': 0,
+                    // Vehicle
+                    'van-payment': 0,
+                    'prius-payment': 600,
+                    'van-fuel-ups': 0,
+                    'prius-fuel-ups': 0,
+                    'maintenance': 440,
+                    'registration': 178,
+                    // Labor
+                    'driver-wage': 20,
+                    'driver-count': 6,
+                    'hours-per-driver': 160,
+                    'payroll-taxes': 15,
+                    // Overhead
+                    'rent': 2500,
+                    'utilities': 300,
+                    'general-insurance': 800,
+                    'licenses': 400,
+                    'admin': 1000,
+                    // Operations
+                    'total-miles': 0,
+                    'deadhead-miles': 0,
+                    'missed-trips': 0,
+                    'on-time-trips': 0,
+                    'scheduled-trips': 0,
+                    'repeat-trips': 0,
+                    'overtime-hours': 0,
+                    'total-driver-hours': 0,
+                    'vehicle-count': 4,
+                    // Growth
+                    'add-vehicles': 0
+                };
+                document.querySelectorAll('input').forEach(input => {
+                    if (defaults[input.id] !== undefined) {
+                        input.value = defaults[input.id];
+                    }
+                });
+                calculateMetrics();
+            }
+        }
+
+        // Initialize calculations
+        calculateMetrics();
+    </script>
+</body>
+
+</html>

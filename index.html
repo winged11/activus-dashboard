@@ -413,6 +413,18 @@
                                 <td><input type="number" id="hours-per-driver" value="160"></td>
                                 <td><input type="number" id="payroll-taxes" value="15"></td>
                             </tr>
+                            <tr>
+                                <td><input type="number" id="driver-wage-2" value="20"></td>
+                                <td><input type="number" id="driver-count-2" value="0"></td>
+                                <td><input type="number" id="hours-per-driver-2" value="160"></td>
+                                <td><input type="number" id="payroll-taxes-2" value="15"></td>
+                            </tr>
+                            <tr>
+                                <td><input type="number" id="driver-wage-3" value="20"></td>
+                                <td><input type="number" id="driver-count-3" value="0"></td>
+                                <td><input type="number" id="hours-per-driver-3" value="160"></td>
+                                <td><input type="number" id="payroll-taxes-3" value="15"></td>
+                            </tr>
                         </table>
                     </div>
                 </div>
@@ -747,6 +759,14 @@
             const driverCount = getVal('driver-count');
             const hoursPerDriver = getVal('hours-per-driver');
             const payrollTaxes = getVal('payroll-taxes');
+            const driverWage2 = getVal('driver-wage-2');
+            const driverCount2 = getVal('driver-count-2');
+            const hoursPerDriver2 = getVal('hours-per-driver-2');
+            const payrollTaxes2 = getVal('payroll-taxes-2');
+            const driverWage3 = getVal('driver-wage-3');
+            const driverCount3 = getVal('driver-count-3');
+            const hoursPerDriver3 = getVal('hours-per-driver-3');
+            const payrollTaxes3 = getVal('payroll-taxes-3');
             const rent = getVal('rent');
             const utilities = getVal('utilities');
             const generalInsurance = getVal('general-insurance');
@@ -754,7 +774,10 @@
             const admin = getVal('admin');
 
             const vehicleCosts = (vanPayment * 2) + (priusPayment * 2) + vehicleInsurance + fuelCost + maintenance + registration;
-            const laborCosts = (driverWage * driverCount * hoursPerDriver) * (1 + payrollTaxes / 100);
+            const laborCosts1 = (driverWage * driverCount * hoursPerDriver) * (1 + payrollTaxes / 100);
+            const laborCosts2 = (driverWage2 * driverCount2 * hoursPerDriver2) * (1 + payrollTaxes2 / 100);
+            const laborCosts3 = (driverWage3 * driverCount3 * hoursPerDriver3) * (1 + payrollTaxes3 / 100);
+            const laborCosts = laborCosts1 + laborCosts2 + laborCosts3;
             const fixedCosts = rent + utilities + generalInsurance + licenses + admin;
             const totalCosts = vehicleCosts + laborCosts + fixedCosts;
             const netProfit = netRevenue - totalCosts;
